@@ -1,7 +1,5 @@
-# AI-NotesGenerator
-Notes Generator – Microservices Project  This project is a microservices-based application that takes a syllabus as input and automatically generates detailed study notes.
 ---
-# 📘 Notes Generator (Microservices Architecture)
+# 📘 AI Notes Generator (Microservices Architecture)
 
 A modular **Notes Generator System** built with **Node.js microservices**, designed to automatically generate structured study notes from a given syllabus.  
 This project follows a **microservices architecture**, making it scalable, maintainable, and easy to extend with new features.
@@ -39,7 +37,7 @@ notes-generator/
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/notes-generator.git
+git clone https://github.com/Atul04singh/notes-generator.git
 cd notes-generator
 ```
 
@@ -99,7 +97,8 @@ pm2 start ecosystem.config.js
 ---
 
 ## 📌 Future Enhancements
-- ✨ Add AI-powered **summarization** of notes.  
+- ✨ Add AI-powered **summarization** of notes.
+- 🖼️ get img of important concept (through web scraper or ai img generation) 
 - 📊 Interactive **charts & diagrams** generation.  
 - 🔍 Advanced **search and filtering** of notes.  
 - ☁️ Cloud deployment with Docker & Kubernetes.  
