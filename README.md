@@ -95,6 +95,14 @@ pm2 start ecosystem.config.js
 - **Architecture:** Microservices  
 
 ---
+## Output
+### 📄 Cloud Computing Notes
+[View PDF](https://github.com/Atul04singh/AI-NotesGenerator/blob/main/opt/Cloud%20Computing%20notes%20by%20Atul%20Singh%20(llama).pdf)
+
+- This notes generator is most sutaible for 60% theory and 40% derivation , best for programing notes.
+- its output also depends on which ollama llm model you are using . 
+
+---
 
 ## 📌 Future Enhancements
 - ✨ Add AI-powered **summarization** of notes.
