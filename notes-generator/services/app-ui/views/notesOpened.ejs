@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= syllabus.topic %> - Notes</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playfair+Display:wght@400;600&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #222222;
+        --link-color: #0066ff;
+        --card-bg: #f9f9f9;
+        --code-bg: #272822;
+        --border-radius: 8px;
+        --font-family-main: "Segoe UI", Roboto, Arial, sans-serif;
+      }
+      body.dark-mode {
+        --bg-color: #121212;
+        --text-color: #eeeeee;
+        --link-color: #66aaff;
+        --card-bg: #1e1e1e;
+        --code-bg: #2d2d2d;
+      }
+      body {
+        font-family: var(--font-family-main);
+        margin: 0;
+        padding: 20px;
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition: background 0.3s ease, color 0.3s ease;
+        max-width: 900px;
+        margin: auto;
+      }
+      h1,
+      h2,
+      h3 {
+        color: var(--text-color);
+        margin-top: 1.5rem;
+        font-family: var(--font-family-main);
+      }
+      .back-btn {
+        display: inline-block;
+        padding: 8px 14px;
+        background: var(--link-color);
+        color: white;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+        margin-right: 10px;
+      }
+      .back-btn:hover {
+        background: #004ecc;
+      }
+      .controls {
+        float: right;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .toggle-btn,
+      .font-select {
+        cursor: pointer;
+        padding: 8px 14px;
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        font-size: 0.9rem;
+        color: var(--text-color);
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+      .toggle-btn:hover {
+        background: var(--link-color);
+        color: white;
+      }
+      .subtopic {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: background 0.3s ease;
+      }
+      .markdown-content {
+        margin-top: 10px;
+        line-height: 1.6;
+        font-family: var(--font-family-main);
+      }
+      .markdown-content code {
+        background: var(--code-bg);
+        color: #f8f8f2;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace !important;
+      }
+      .markdown-content pre {
+        background: var(--code-bg);
+        color: #f8f8f2;
+        padding: 12px;
+        border-radius: var(--border-radius);
+        overflow-x: auto;
+        font-family: monospace !important;
+      }
+
+      /* Canvas Overlay */
+      #drawCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none; /* disabled until toggle on */
+        z-index: 9999;
+      }
+
+      /* Toolbar for drawing tools */
+      #drawingCanvas {
+        touch-action: none; /* Prevent browser gestures */
+      }
+      html,
+      body {
+        touch-action: pan-y pinch-zoom; /* Allow two-finger scroll/zoom elsewhere */
+      }
+
+      #canvasToolbar {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: var(--border-radius);
+        padding: 8px;
+        display: none;
+        gap: 5px;
+        z-index: 10000;
+      }
+      #canvasToolbar button,
+      #canvasToolbar select,
+      #canvasToolbar input {
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/home" class="back-btn">← Back to Home</a>
+    <div class="controls">
+      <button class="toggle-btn" onclick="toggleCanvas()">🖌 Canvas</button>
+      <button class="toggle-btn" onclick="toggleTheme()">🌙 Night Mode</button>
+      <select class="font-select" onchange="changeFont(this.value)">
+        <option value='"Segoe UI", Roboto, Arial, sans-serif'>Default</option>
+        <option value='"Dancing Script", cursive'>Handwritten</option>
+        <option value='"Playfair Display", serif'>Calligraphy</option>
+        <option value='"Roboto", sans-serif'>Clean Sans</option>
+      </select>
+    </div>
+
+    <h1><%= syllabus.topic %></h1>
+
+    <% function renderSubtopics(subtopics) { %> <% subtopics.forEach(sub => { %>
+    <div class="subtopic">
+      <h3><%= sub.topicName || sub.topic %></h3>
+      <% if (sub.result && sub.result.trim() !== "") { %> <% if (sub.resultHTML)
+      { %>
+      <div class="markdown-content"><%- sub.resultHTML %></div>
+      <% } %> <% } %> <% if (sub.subtopics && sub.subtopics.length > 0) { %>
+      <div class="nested-subtopics"><% renderSubtopics(sub.subtopics); %></div>
+      <% } %>
+    </div>
+    <% }); %> <% } %> <% renderSubtopics(syllabus.subtopics || []); %>
+
+    <!-- Canvas for drawing -->
+    <canvas id="drawCanvas"></canvas>
+    <div id="canvasToolbar">
+      <select id="penSize">
+        <option value="2">Thin</option>
+        <option value="5" selected>Medium</option>
+        <option value="10">Thick</option>
+      </select>
+      <input type="color" id="penColor" value="#ff0000" />
+      <button onclick="setTool('pen')">✏ Pen</button>
+      <button onclick="setTool('highlighter')">🖍 Highlighter</button>
+      <button onclick="setTool('eraser')">🩹 Eraser</button>
+      <button onclick="clearCanvas()">🗑 Clear</button>
+      <button onclick="toggleCanvas()">❌</button>
+      <button id="toggleScrollBtn">Enable Scroll</button>
+    </div>
+
+    <script>
+      // THEME TOGGLE
+      function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+        const btn = document.querySelectorAll(".toggle-btn")[1];
+        btn.textContent = document.body.classList.contains("dark-mode")
+          ? "☀️ Day Mode"
+          : "🌙 Night Mode";
+      }
+
+      function changeFont(font) {
+        document.documentElement.style.setProperty("--font-family-main", font);
+      }
+
+      // CANVAS SETUP
+      const canvas = document.getElementById("drawCanvas");
+      const ctx = canvas.getContext("2d");
+      const toolbar = document.getElementById("canvasToolbar");
+      let drawing = false;
+      let tool = "pen";
+      let penSize = document.getElementById("penSize").value;
+      let penColor = document.getElementById("penColor").value;
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      function toggleCanvas() {
+        const isActive = canvas.style.pointerEvents === "auto";
+        if (isActive) {
+          canvas.style.pointerEvents = "none";
+          toolbar.style.display = "none";
+        } else {
+          canvas.style.pointerEvents = "auto";
+          toolbar.style.display = "flex";
+        }
+      }
+
+      function setTool(selectedTool) {
+        tool = selectedTool;
+      }
+
+      document
+        .getElementById("penSize")
+        .addEventListener("change", (e) => (penSize = e.target.value));
+      document
+        .getElementById("penColor")
+        .addEventListener("change", (e) => (penColor = e.target.value));
+
+      let lastX = 0,
+        lastY = 0;
+
+      canvas.addEventListener("pointerdown", (e) => {
+        drawing = true;
+        canvas.setPointerCapture(e.pointerId); // Keep events even if cursor leaves
+        [lastX, lastY] = [e.clientX, e.clientY];
+        e.preventDefault();
+      });
+
+      canvas.addEventListener("pointerup", (e) => {
+        drawing = false;
+        canvas.releasePointerCapture(e.pointerId);
+      });
+
+      canvas.addEventListener("pointerout", () => {
+        drawing = false;
+      });
+
+      canvas.addEventListener("pointermove", (e) => {
+        if (!drawing) return;
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        if (tool === "eraser") {
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.lineWidth = penSize;
+        } else if (tool === "highlighter") {
+          ctx.globalCompositeOperation = "source-over";
+          ctx.strokeStyle = penColor;
+          ctx.globalAlpha = 0.3;
+          ctx.lineWidth = penSize * 2;
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          ctx.strokeStyle = penColor;
+          ctx.globalAlpha = 1;
+          ctx.lineWidth = penSize;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+
+        [lastX, lastY] = [e.clientX, e.clientY];
+        e.preventDefault();
+      });
+
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      const toggleScrollBtn = document.getElementById("toggleScrollBtn");
+      let scrollEnabled = false; // default = drawing mode
+
+      function updateScrollMode() {
+        if (scrollEnabled) {
+          canvas.style.touchAction = "auto"; // allow scrolling/zoom
+          toggleScrollBtn.textContent = "Disable Scroll";
+        } else {
+          canvas.style.touchAction = "none"; // block scrolling, allow drawing
+          toggleScrollBtn.textContent = "Enable Scroll";
+        }
+      }
+
+      toggleScrollBtn.addEventListener("click", () => {
+        scrollEnabled = !scrollEnabled;
+        updateScrollMode();
+      });
+
+      // Initialize
+      updateScrollMode();
+    </script>
+  </body>
+</html>
